@@ -1,30 +1,31 @@
+# Install Apex on Linux
+
+## Install Linux distro, I personally use CachyOS and Ubuntu 24, both good
+
+## Install flatpak steam
+https://steamcommunity.com/sharedfiles/filedetails/?l=french&id=2615011323
+
+## Install gamemode
+Google it or use chatgpt for ur distro
+
+## Spoof your hwid to avoid hwid ban
+https://www.unknowncheats.me/forum/apex-legends/644651-hwid-banned-linux.html
+
+## Download Apex
+
+## Configure your steam compatability, check both and set to lastest proton.
+
+## Confiure Apex to use latest Proton as well
+
 ## 
+
+## Add following command for Apex setup
+Change 151 to your screen fps + 7
 ```
- .--..--..--..--..--..--..--..--..--..--..--..--..--..--. 
-/ .. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \
-\ \/\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ \/ /
- \/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\/ / 
- / /\                                                / /\ 
-/ /\ \          ,--.             ,--.               / /\ \
-\ \/ /        ,--.'|  ,---,  ,--/  /|  ,---,        \ \/ /
- \/ /     ,--,:  : ,`--.' ,---,': / ' '  .' \        \/ / 
- / /\  ,`--.'`|  ' |   :  :   : '/ / /  ;    '.      / /\ 
-/ /\ \ |   :  :  | :   |  |   '   , :  :       \    / /\ \
-\ \/ / :   |   \ | |   :  '   |  /  :  |   /\   \   \ \/ /
- \/ /  |   : '  '; '   '  |   ;  ;  |  :  ' ;.   :   \/ / 
- / /\  '   ' ;.    |   |  :   '   \ |  |  ;/  \   \  / /\ 
-/ /\ \ |   | | \   '   :  |   |    ''  :  | \  \ ,' / /\ \
-\ \/ / '   : |  ; .|   |  '   : |.  |  |  '  '--'   \ \/ /
- \/ /  |   | '`--' '   :  |   | '_\.|  :  :          \/ / 
- / /\  '   : |     ;   |.''   : |   |  | ,'          / /\ 
-/ /\ \ ;   |.'     '---'  ;   |,'   `--''           / /\ \
-\ \/ / '---'              '---'                     \ \/ /
- \/ /                                                \/ / 
- / /\.--..--..--..--..--..--..--..--..--..--..--..--./ /\ 
-/ /\ \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \/\ \
-\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `' /
- `--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--' 
+gamemoderun %command% +fps_max 151
 ```
+
+# How to use this cheese
 
 ## Intall build-essential (Mandatory. Do this once in the Linux Terminal) !!!
 ```
