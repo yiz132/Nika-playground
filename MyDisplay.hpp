@@ -1,6 +1,6 @@
 #pragma once
 struct MyDisplay {
-private:
+public:
     Display* display = XOpenDisplay(NULL);
 
 public:

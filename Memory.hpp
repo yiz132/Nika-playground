@@ -39,6 +39,20 @@ namespace mem {
             return false;
         return false;
     }
+
+    template <class T>
+    T Read(long Address) {
+        T buffer;
+        bool success = Read(Address, &buffer, sizeof(T));
+        //if (!success && Config::Home::ErrorLogging)
+        if (!success) {
+            m_pid = 0;
+            /*throw std::invalid_argument(
+                "Failed to get " + std::to_string(sizeof(T)) + "at: " + std::to_string(Address));*/
+        }
+        return buffer;
+    }
+
     bool Write(long address, void* pBuff, size_t size) {
         if (size == 0)
             return false;

@@ -157,22 +157,22 @@ struct Player {
         std::array<float, 3> glowColorRGB = { 0, 0, 0 };
         if (!isVisible) {
             settingIndex = 75;
-            glowColorRGB = { 0.5, 0.5, 0.5 }; // grey
+            glowColorRGB = { 0, 1, 0.5 }; // grey
         } else if (health >= 205) {
             settingIndex = 66;
-            glowColorRGB = { 1, 0, 0 }; // red shield
+            glowColorRGB = { 0.5, 0, 0.5 }; // red shield
         } else if (health >= 190) {
             settingIndex = 67;
             glowColorRGB = { 0.5, 0, 0.5 }; // purple shield
         } else if (health >= 170) {
             settingIndex = 68;
-            glowColorRGB = { 0, 0.5, 1 }; // blue shield
+            glowColorRGB = { 0.5, 0, 0.5 }; // blue shield
         } else if (health >= 95) {
             settingIndex = 69;
-            glowColorRGB = { 0, 1, 0.5 }; // gray shield // cyan color
+            glowColorRGB = { 0.5, 0, 0.5 }; // gray shield // cyan color
         } else {
             settingIndex = 70;
-            glowColorRGB = { 0, 1, 0 }; // low health enemies // green color
+            glowColorRGB = { 0.5, 0, 0.5 }; // low health enemies // green color
         }
         
         if (!isSameTeam) {

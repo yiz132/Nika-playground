@@ -1,3 +1,9 @@
+#include <X11/Xlib.h>
+#include <X11/keysym.h>
+#include <X11/extensions/XTest.h>
+#include <unistd.h>
+#include <iostream>
+
 #pragma once
 struct Random{
     ConfigLoader* cl;
@@ -13,6 +19,79 @@ struct Random{
         map = level;
         lp = localPlayer;
         players = all_players;
+    }
+
+    void AutoTapStrafe() {
+        if(!map->playable) return;
+        if(lp->dead) return;
+
+        bool ts_start = true;
+        bool longclimb = false;
+
+        float wallrun_start = mem::Read<float>(lp->base + OFF_WALL_RUN_START_TIME);
+        float wallrun_clear = mem::Read<float>(lp->base + OFF_WALL_RUN_CLEAR_TIME);
+        float world_time = mem::Read<float>(lp->base + OFFSET_TIME_BASE);
+
+        if (wallrun_start > wallrun_clear) {
+        float climbTime = world_time - wallrun_start;
+        if (climbTime > 0.8) {
+            longclimb = true;
+            ts_start = false;
+        }
+        else {
+            ts_start = true;
+        }
+        }
+        if (ts_start) {
+        if (longclimb) {
+            if (world_time > wallrun_clear + 0.1)
+            longclimb = false;
+        }
+
+        int flags = mem::Read<int>(lp->base + OFF_CENTITY_FLAGS);
+        int backward_state = mem::Read<int>(OFF_REGION + OFF_IN_BACKWARD);
+        int forward_state = mem::Read<int>(OFF_REGION + OFF_IN_FORWARD);
+        int force_forward = mem::Read<int>(OFF_REGION + OFF_IN_FORWARD + 0x8);
+        int skydrive_state = mem::Read<int>(lp->base + OFF_SKY_DIVE_STATUS);
+        int duck_state = mem::Read<int>(lp->base + OFF_DUCK_STATUS);
+
+        if (((flags & 0x1) == 0) && !(skydrive_state > 0) && !longclimb &&
+            !(backward_state > 0)) {
+            if (((duck_state > 0) && (forward_state == 33))) { // Previously 33
+            if (force_forward == 0) {
+                mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 1);
+            }
+            else {
+                mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 0);
+            }
+            }
+        }
+        else if ((flags & 0x1) != 0) {
+            if (forward_state == 0) {
+            mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 0);
+            }
+            else if (forward_state == 33) {
+            mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 1);
+            }
+        }
+        }
+    }
+
+    void BHop() {
+        if(!map->playable) return;
+        if(lp->dead) return;
+
+        KeySym leftControlKeySym = XK_Control_L;
+        KeySym spaceKeySym = XK_space;
+
+        if (display->keyDown(leftControlKeySym) && display->keyDown(spaceKeySym)) {
+            std::this_thread::sleep_for(
+            std::chrono::milliseconds(25));
+            mem::Write(OFF_REGION + OFF_IN_JUMP + 0x08, 5);
+            std::this_thread::sleep_for(
+            std::chrono::milliseconds(25));
+            mem::Write(OFF_REGION + OFF_IN_JUMP + 0x08, 4);
+        }
     }
 
     void superGlide(){
@@ -60,6 +139,7 @@ struct Random{
             }
         }
     }
+    
     void quickTurn(){
         if(!map->playable) return;
         if(!lp->isValid()) return;
@@ -206,6 +286,50 @@ struct Random{
             mem::Write<int>(lp->weaponEntity + OFF_SKIN, skinID);
         }                    
     }
+
+    void antiRecoil() {
+        int recoil_range = 1;
+        // Create a display object to handle mouse events
+        Display* display = XOpenDisplay(NULL);
+        if (!display) {
+            std::cerr << "Unable to open X display\n";
+            return;
+        }
+
+        Window root = DefaultRootWindow(display);
+        XEvent event;
+
+        // Variables to store mouse button states
+        int left_button_pressed = 0;
+        int right_button_pressed = 0;
+
+        // Check the state of mouse buttons
+        XQueryPointer(display, root, &event.xbutton.root, &event.xbutton.window,
+                        &event.xbutton.x_root, &event.xbutton.y_root,
+                        &event.xbutton.x, &event.xbutton.y,
+                        &event.xbutton.state);
+
+        // Bitwise AND to check if left and right buttons are pressed
+        left_button_pressed = (event.xbutton.state & Button1Mask);  // Left button
+        right_button_pressed = (event.xbutton.state & Button3Mask); // Right button
+
+        if (left_button_pressed && right_button_pressed) {
+            // Simulate anti-recoil by moving the mouse in jitter motion
+            XTestFakeRelativeMotionEvent(display, -recoil_range, recoil_range, CurrentTime); // Move up-right
+            XFlush(display);
+            std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
+
+            XTestFakeRelativeMotionEvent(display, recoil_range, -recoil_range, CurrentTime); // Move down-left
+            XFlush(display);
+            std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
+        }
+
+        // Add a small delay to avoid CPU overconsumption
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+
+        XCloseDisplay(display);
+    }
+
      
     void runAll(int counter){
         superGlide();
@@ -214,5 +338,8 @@ struct Random{
         printLevels();
         skinChanger();
         spectatorView();
+        BHop();
+        AutoTapStrafe();
+        antiRecoil();
     }
 };

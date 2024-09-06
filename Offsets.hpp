@@ -70,3 +70,13 @@ constexpr long OFF_GLOW_FIX = 0x268;
 constexpr long OFF_GLOW_HIGHLIGHT_ID = 0x29C; //[DT_HighlightSettings].m_highlightServerActiveStates
 constexpr long OFF_GLOW_HIGHLIGHTS = 0xb13c6a0;
 constexpr long OFF_GLOW_ENABLE = 0x28c;
+
+
+// TS
+constexpr long OFF_WALL_RUN_START_TIME = 0x3614; // [RecvTable.DT_LocalPlayerExclusive]->m_wallRunStartTime
+constexpr long OFF_WALL_RUN_CLEAR_TIME = 0x3618; // [RecvTable.DT_LocalPlayerExclusive]->m_wallRunClearTime
+constexpr long OFF_IN_BACKWARD = 0x0769b5d0; // [Buttons]->in_backward
+constexpr long OFF_IN_FORWARD = 0x0769b5a8; // [Buttons]->in_forward
+constexpr long OFF_SKY_DIVE_STATUS = 0x4724; // [DataMap.C_Player]->m_skydiveState
+constexpr long OFF_DUCK_STATUS = 0x2a60; // [DataMap.C_Player]->m_duckState
+constexpr long OFF_CENTITY_FLAGS = 0x00c8; // [DataMap.C_Player]->m_fFlags
