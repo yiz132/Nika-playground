@@ -21,6 +21,28 @@ struct Random{
         players = all_players;
     }
 
+    void autoGrapple() {
+        if(!map->playable) return;
+        if(lp->dead) return;
+
+        KeySym qKeySym = XK_Q;
+
+        if (display->keyDown(qKeySym)) {
+            if (!lp->inJump) {
+                int n = mem::Read<int>(lp->base + OFF_GRAPPLE + OFF_GRAPPLE_ATTACHED);
+    
+                std::cout << n << std::endl;
+    
+                printf("n: %d\n", n);  // Use %d to print an integer in printf.
+                if (n == 1) {
+                    mem::Write<int>(OFF_REGION + OFF_IN_JUMP + 0x8, 5);
+                    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                    mem::Write<int>(OFF_REGION + OFF_IN_JUMP + 0x8, 4);
+                }
+            }
+	    }
+    }
+
     void AutoTapStrafe() {
         if(!map->playable) return;
         if(lp->dead) return;
@@ -288,15 +310,17 @@ struct Random{
     }
 
     void antiRecoil() {
-        int recoil_range = 1;
-        // Create a display object to handle mouse events
-        Display* display = XOpenDisplay(NULL);
-        if (!display) {
+        int recoil_range = 1.2;
+
+        if (!display || !display->display) {
             std::cerr << "Unable to open X display\n";
             return;
         }
 
-        Window root = DefaultRootWindow(display);
+
+        Display* xDisplay = display->display;
+
+        Window root = DefaultRootWindow(xDisplay);
         XEvent event;
 
         // Variables to store mouse button states
@@ -304,7 +328,7 @@ struct Random{
         int right_button_pressed = 0;
 
         // Check the state of mouse buttons
-        XQueryPointer(display, root, &event.xbutton.root, &event.xbutton.window,
+        XQueryPointer(xDisplay, root, &event.xbutton.root, &event.xbutton.window,
                         &event.xbutton.x_root, &event.xbutton.y_root,
                         &event.xbutton.x, &event.xbutton.y,
                         &event.xbutton.state);
@@ -315,31 +339,25 @@ struct Random{
 
         if (left_button_pressed && right_button_pressed) {
             // Simulate anti-recoil by moving the mouse in jitter motion
-            XTestFakeRelativeMotionEvent(display, -recoil_range, recoil_range, CurrentTime); // Move up-right
-            XFlush(display);
+            XTestFakeRelativeMotionEvent(xDisplay, -recoil_range, recoil_range, CurrentTime); // Move up-right
+            XFlush(xDisplay);
             std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
 
-            XTestFakeRelativeMotionEvent(display, recoil_range, -recoil_range, CurrentTime); // Move down-left
-            XFlush(display);
+            XTestFakeRelativeMotionEvent(xDisplay, recoil_range, -recoil_range, CurrentTime); // Move down-left
+            XFlush(xDisplay);
             std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
         }
 
         // Add a small delay to avoid CPU overconsumption
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
-
-        XCloseDisplay(display);
     }
 
      
     void runAll(int counter){
         superGlide();
-        quickTurn();
-        mapRadar();
-        printLevels();
-        skinChanger();
-        spectatorView();
         BHop();
         AutoTapStrafe();
         antiRecoil();
+        autoGrapple();
     }
 };

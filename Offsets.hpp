@@ -80,3 +80,6 @@ constexpr long OFF_IN_FORWARD = 0x0769b5a8; // [Buttons]->in_forward
 constexpr long OFF_SKY_DIVE_STATUS = 0x4724; // [DataMap.C_Player]->m_skydiveState
 constexpr long OFF_DUCK_STATUS = 0x2a60; // [DataMap.C_Player]->m_duckState
 constexpr long OFF_CENTITY_FLAGS = 0x00c8; // [DataMap.C_Player]->m_fFlags
+
+constexpr long OFF_GRAPPLE = 0x2cc0; //[RecvTable.DT_Player].m_grapple
+constexpr long OFF_GRAPPLE_ATTACHED = 0x2d50; //m_grappleAttached
