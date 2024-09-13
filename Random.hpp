@@ -50,8 +50,8 @@ struct Random{
         bool ts_start = true;
         bool longclimb = false;
 
-        float wallrun_start = mem::Read<float>(lp->base + OFF_WALL_RUN_START_TIME);
-        float wallrun_clear = mem::Read<float>(lp->base + OFF_WALL_RUN_CLEAR_TIME);
+        float wallrun_start = mem::Read<float>(lp->base + OFFSET_WALL_RUN_START_TIME);
+        float wallrun_clear = mem::Read<float>(lp->base + OFFSET_WALL_RUN_CLEAR_TIME);
         float world_time = mem::Read<float>(lp->base + OFFSET_TIME_BASE);
 
         if (wallrun_start > wallrun_clear) {
@@ -72,8 +72,8 @@ struct Random{
 
         int flags = mem::Read<int>(lp->base + OFF_CENTITY_FLAGS);
         int backward_state = mem::Read<int>(OFF_REGION + OFF_IN_BACKWARD);
-        int forward_state = mem::Read<int>(OFF_REGION + OFF_IN_FORWARD);
-        int force_forward = mem::Read<int>(OFF_REGION + OFF_IN_FORWARD + 0x8);
+        int forward_state = mem::Read<int>(OFF_REGION + OFFSET_IN_FORWARD);
+        int force_forward = mem::Read<int>(OFF_REGION + OFFSET_IN_FORWARD + 0x8);
         int skydrive_state = mem::Read<int>(lp->base + OFF_SKY_DIVE_STATUS);
         int duck_state = mem::Read<int>(lp->base + OFF_DUCK_STATUS);
 
@@ -81,19 +81,19 @@ struct Random{
             !(backward_state > 0)) {
             if (((duck_state > 0) && (forward_state == 33))) { // Previously 33
             if (force_forward == 0) {
-                mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 1);
+                mem::Write<int>(OFF_REGION + OFFSET_IN_FORWARD + 0x8, 1);
             }
             else {
-                mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 0);
+                mem::Write<int>(OFF_REGION + OFFSET_IN_FORWARD + 0x8, 0);
             }
             }
         }
         else if ((flags & 0x1) != 0) {
             if (forward_state == 0) {
-            mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 0);
+            mem::Write<int>(OFF_REGION + OFFSET_IN_FORWARD + 0x8, 0);
             }
             else if (forward_state == 33) {
-            mem::Write<int>(OFF_REGION + OFF_IN_FORWARD + 0x8, 1);
+            mem::Write<int>(OFF_REGION + OFFSET_IN_FORWARD + 0x8, 1);
             }
         }
         }
@@ -310,7 +310,7 @@ struct Random{
     }
 
     void antiRecoil() {
-        int recoil_range = 1.2;
+        float recoil_range = 1.2;
 
         if (!display || !display->display) {
             std::cerr << "Unable to open X display\n";
@@ -341,11 +341,11 @@ struct Random{
             // Simulate anti-recoil by moving the mouse in jitter motion
             XTestFakeRelativeMotionEvent(xDisplay, -recoil_range, recoil_range, CurrentTime); // Move up-right
             XFlush(xDisplay);
-            std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
+            std::this_thread::sleep_for(std::chrono::milliseconds(7));
 
             XTestFakeRelativeMotionEvent(xDisplay, recoil_range, -recoil_range, CurrentTime); // Move down-left
             XFlush(xDisplay);
-            std::this_thread::sleep_for(std::chrono::milliseconds(7)); // Sleep for 7 ms
+            std::this_thread::sleep_for(std::chrono::milliseconds(7));
         }
 
         // Add a small delay to avoid CPU overconsumption
